@@ -21,7 +21,7 @@ def max_dest(section_values, sections_exploring, width, height):
     max = 0
     for x in range(0, 8):
         for y in range(0, 8):
-            if sections_exploring[x][y] == -1 and section_values > max:
+            if sections_exploring[x][y] == -1 and section_values[x][y] > max:
                 max_x = x
                 max_y = y
     return Position(x * width / 8, y * width / 8), x, y
