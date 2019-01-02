@@ -1,3 +1,5 @@
+import random
+
 import hlt
 from hlt import constants
 from hlt import Direction
@@ -7,16 +9,16 @@ def check_sparse(game_map, position):
     surroundings = position.get_surrounding_cardinals()
     halite_amounts = list(map(lambda pos: game_map[pos].halite_amount, surroundings))
 
-    if max(halite_amounts) < constants.MAX_HALITE/20:
+    if max(halite_amounts) < constants.MAX_HALITE/10:
         return True
 
     return False
 
-def collect_halite(game_map, position):
-    surroundings = position.get_surrounding_cardinals()
+def collect_halite(game_map, ship):
+    surroundings = ship.position.get_surrounding_cardinals()
     halite_amounts = list(map(lambda pos: game_map[pos].halite_amount, surroundings))
 
-    if max(halite_amounts) - .1 * game_map[position].halite_amount > game_map[position].halite_amount:
+    if max(halite_amounts) - .1 * game_map[ship.position].halite_amount > game_map[ship.position].halite_amount:
         return surroundings[halite_amounts.index(max(halite_amounts))]
 
     return Position(0, 0)
@@ -48,15 +50,5 @@ def exiting(game_map, ship, shipyard, destination):
 def should_collapse(game_map, ship, shipyard, turn):
     return game_map.calculate_distance(ship.position, shipyard.position) + game_map.width / 3 >= constants.MAX_TURNS - turn
 
-'''
-def naive_navigate_no_shipyard(game_map, ship, destination):
-    for direction in game_map.get_unsafe_moves(ship.position, destination):
-        target_pos = ship.position.directional_offset(direction)
-        if game_map[target_pos].has_structure:
-            return
-        if not game_map[target_pos].is_occupied and game_map[target_pos].has_structure:
-            game_map[target_pos].mark_unsafe(ship)
-            return direction
-
-    return Direction.Still
-'''
+def random_direction():
+    return random.choice([Direction.North, Direction.South, Direction.East, Direction.West])

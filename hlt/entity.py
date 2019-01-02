@@ -55,6 +55,7 @@ class Ship(Entity):
         self.halite_amount = halite_amount
         self.destx = 0
         self.desty = 0
+        self.turns_still = 0
 
     @property
     def is_full(self):
@@ -73,12 +74,17 @@ class Ship(Entity):
         raw_direction = direction
         if not isinstance(direction, str) or direction not in "nsewo":
             raw_direction = Direction.convert(direction)
+        if raw_direction == commands.STAY_STILL:
+            self.turns_still += 1
+        else:
+            self.turns_still = 0
         return "{} {} {}".format(commands.MOVE, self.id, raw_direction)
 
     def stay_still(self):
         """
         Don't move this ship.
         """
+        self.turns_still += 1
         return "{} {} {}".format(commands.MOVE, self.id, commands.STAY_STILL)
 
     @staticmethod

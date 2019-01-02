@@ -38,6 +38,8 @@ while True:
 
     for ship in me.get_ships():
         logging.info("Ship {} has {} halite.".format(ship.id, ship.halite_amount))
+        logging.info("Ship {} still for {} turns.".format(ship.id, ship.turns_still))
+        logging.info("Ship {} is {}.".format(ship.id, ship_status[ship.id] if ship.id in ship_status else "no status"))
 
         if nav.should_collapse(game_map, ship, me.shipyard, game.turn_number):
             ship_status[ship.id] = "collapse"
@@ -45,7 +47,7 @@ while True:
         if ship.id not in ship_status:
             # Send it to the most optimal section of the map
             max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
-            ship_destinations[ship.id] = max_dest_info[0]
+            ship_destinations[ship.id] = game_map.normalize(max_dest_info[0])
             ship.destx = max_dest_info[1]
             ship.desty = max_dest_info[2]
             sections_exploring[ship.destx][ship.desty] = ship.id
@@ -92,7 +94,9 @@ while True:
                     move = game_map.naive_navigate(ship, ship_destinations[ship.id])
                     command_queue.append(ship.move(move))
             if ship_status[ship.id] == "exploring":
-                if nav.check_sparse(game_map, ship.position):
+                if ship.turns_still > 10:
+                    command_queue.append(ship.move(nav.random_direction()))
+                if nav.check_sparse(game_map, ship.position) or ship.turns_still > 5:
                     sections_exploring[ship.destx][ship.desty] = -1
                     max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
                     ship_destinations[ship.id] = max_dest_info[0]
@@ -101,7 +105,7 @@ while True:
                     sections_exploring[ship.destx][ship.desty] = ship.id
                     ship_status[ship.id] = "deploying"
                 else:
-                    move = game_map.naive_navigate(ship, nav.collect_halite(game_map, ship.position))
+                    move = game_map.naive_navigate(ship, nav.collect_halite(game_map, ship))
                     command_queue.append(ship.move(move))
         else:
             command_queue.append(ship.stay_still())
