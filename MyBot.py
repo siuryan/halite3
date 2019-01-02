@@ -6,9 +6,9 @@ import logging
 # Import the Halite SDK, which will let you interact with the game.
 import hlt
 from hlt import constants
-from hlt import Position
 
 from util import nav
+from util import map_sections
 
 # This game object contains the initial game state.
 game = hlt.Game()
@@ -16,17 +16,11 @@ game = hlt.Game()
 me = game.me
 game_map = game.game_map
 
-section_values = [ [], [], [], [], [], [], [], [] ]
-for x in range(0, 8):
-    for y in range(0, 8):
-        section_values[x].append(0)
-        start_x = x * game_map.width / 8
-        start_y = y * game_map.height / 8
-        end_x = (x + 1) * game_map.width / 8
-        end_y = (y + 1) * game_map.height / 8
-        for section_x in range(int(start_x), int(end_x)):
-            for section_y in range(int(start_y), int(end_y)):
-                section_values[x][y] += 1.0 * (game_map[Position(section_x, section_y)].halite_amount) / (game_map.calculate_distance(me.shipyard.position, Position(section_x, section_y)) + 1)
+sections_exploring = []
+for i in range(0, 8):
+    sections_exploring.append([-1, -1, -1, -1, -1, -1, -1, -1])
+
+section_values = map_sections.get_section_values(me, game_map)
 
 # Respond with your name.
 game.ready("v1")
