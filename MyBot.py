@@ -44,7 +44,7 @@ while True:
 
         if ship.id not in ship_status:
             # Send it to the most optimal section of the map
-            max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height)
+            max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
             ship_destinations[ship.id] = max_dest_info[0]
             ship.destx = max_dest_info[1]
             ship.desty = max_dest_info[2]
@@ -65,7 +65,7 @@ while True:
             if ship.position == me.shipyard.position:
                 # Re-deploy it to an optimal section of the map
                 sections_exploring[ship.destx][ship.desty] = -1
-                max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height)
+                max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
                 ship_destinations[ship.id] = max_dest_info[0]
                 ship.destx = max_dest_info[1]
                 ship.desty = max_dest_info[2]
@@ -94,7 +94,7 @@ while True:
             if ship_status[ship.id] == "exploring":
                 if nav.check_sparse(game_map, ship.position):
                     sections_exploring[ship.destx][ship.desty] = -1
-                    max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height)
+                    max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
                     ship_destinations[ship.id] = max_dest_info[0]
                     ship.destx = max_dest_info[1]
                     ship.desty = max_dest_info[2]
