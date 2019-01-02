@@ -60,9 +60,9 @@ while True:
 
         # For each of your ships, move randomly if the ship is on a low halite location or the ship is full.
         #   Else, collect halite.
-        if ship.is_full:
+        if game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full:
             if ship_status[ship.id] == "deploying":
-                logging.info(ship.destinations[ship.id])
+                logging.info(ship_destinations[ship.id])
                 if ship.position == me.shipyard.position:
                     move = nav.exiting(game_map, ship, me.shipyard, ship_destinations[ship.id])
                     command_queue.append(ship.move(move))

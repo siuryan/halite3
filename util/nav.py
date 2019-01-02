@@ -13,6 +13,11 @@ def collect_halite(game_map, position):
     return Position(0, 0)
 
 def returning(game_map, ship, shipyard):
+    if ship.position.y == shipyard.position.y:
+        if game_map.naive_navigate(ship, ship.position + Position(0, 1)) != Direction.Still:
+            return game_map.naive_navigate(ship, ship.position + Position(0, 1))
+        elif game_map.naive_navigate(ship, ship.position + Position(0, -1)) != Direction.Still:
+            return game_map.naive_navigate(ship, ship.position + Position(0, -1))
     if game_map.calculate_distance(shipyard.position, ship.position) == 1:
         return game_map.naive_navigate(ship, shipyard.position)
 
