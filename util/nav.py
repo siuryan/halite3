@@ -46,7 +46,7 @@ def exiting(game_map, ship, shipyard, destination):
     return game_map.naive_navigate(ship, e_exit)
 
 def should_collapse(game_map, ship, shipyard, turn):
-    return game_map.calculate_distance(ship.position, shipyard.position) + 5 >= constants.MAX_TURNS - turn
+    return game_map.calculate_distance(ship.position, shipyard.position) + game_map.width / 3 >= constants.MAX_TURNS - turn
 
 '''
 def naive_navigate_no_shipyard(game_map, ship, destination):
