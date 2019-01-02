@@ -39,6 +39,9 @@ while True:
     for ship in me.get_ships():
         logging.info("Ship {} has {} halite.".format(ship.id, ship.halite_amount))
 
+        if nav.should_collapse(game_map, ship, me.shipyard, game.turn_number):
+            ship_status[ship.id] = "collapse"
+
         if ship.id not in ship_status:
             # Send it to the most optimal section of the map
             max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height)
@@ -47,6 +50,16 @@ while True:
             ship.desty = max_dest_info[2]
             sections_exploring[ship.destx][ship.desty] = ship.id
             ship_status[ship.id] = "deploying"
+
+        if ship_status[ship.id] == "collapse":
+            if game_map.calculate_distance(ship, me.shipyard) == 1:
+                move = game_map.get_unsafe_moves(ship.position, me.shipyard.position)[0]
+                command_queue.append(ship.move(move))
+                continue
+
+            move = game_map.naive_navigate(ship, me.shipyard)
+            command_queue.append(ship.move(move))
+            continue
 
         if ship_status[ship.id] == "returning":
             if ship.position == me.shipyard.position:
@@ -79,7 +92,7 @@ while True:
                     move = game_map.naive_navigate(ship, ship_destinations[ship.id])
                     command_queue.append(ship.move(move))
             if ship_status[ship.id] == "exploring":
-                if check_sparse(game_map, ship.position):
+                if nav.check_sparse(game_map, ship.position):
                     sections_exploring[ship.destx][ship.desty] = -1
                     max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height)
                     ship_destinations[ship.id] = max_dest_info[0]
