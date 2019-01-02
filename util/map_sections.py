@@ -1,5 +1,6 @@
 import hlt
 from hlt import Position
+import random
 
 def get_section_values(ship, game_map):
     section_values = []
@@ -25,4 +26,4 @@ def max_dest(section_values, sections_exploring, width, height):
                 max_x = x
                 max_y = y
                 max = section_values[x][y]
-    return Position(max_x * width / 8, max_y * width / 8), max_x, max_y
+    return Position(max_x * width / 8 + random.randint(-4, 4), max_y * width / 8 + random.randint(-4, 4)), max_x, max_y
