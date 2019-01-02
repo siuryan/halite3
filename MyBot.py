@@ -63,8 +63,8 @@ while True:
 
     # If you're on the first turn and have enough halite, spawn a ship.
     # Don't spawn a ship if you currently have a ship at port, though.
-    if game.turn_number <= 200 and me.halite_amount >= constants.SHIP_COST and not game_map[me.shipyard].is_occupied:
-        command_queue.append(game.me.shipyard.spawn())
+    if game.turn_number <= 200 and me.halite_amount >= constants.SHIP_COST and (not game_map[me.shipyard].is_occupied or (game_map[me.shipyard].is_occupied and game_map[me.shipyard].ship.owner != me.id)):
+        command_queue.append(me.shipyard.spawn())
 
     # Send your moves back to the game environment, ending this turn.
     game.end_turn(command_queue)
