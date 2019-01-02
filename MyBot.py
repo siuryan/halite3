@@ -20,8 +20,6 @@ sections_exploring = []
 for i in range(0, 8):
     sections_exploring.append([-1, -1, -1, -1, -1, -1, -1, -1])
 
-section_values = map_sections.get_section_values(me, game_map)
-
 # Respond with your name.
 game.ready("v1")
 
@@ -43,7 +41,7 @@ while True:
 
         if ship.id not in ship_status:
             # Send it to the most optimal section of the map
-            max_dest_info = map_sections.max_dest(map_sections.get_section_values(me, game_map), sections_exploring, game_map.width, game_map.height)
+            max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height)
             ship_destinations[ship.id] = max_dest_info[0]
             ship.destx = max_dest_info[1]
             ship.desty = max_dest_info[2]
@@ -54,7 +52,7 @@ while True:
             if ship.position == me.shipyard.position:
                 # Re-deploy it to an optimal section of the map
                 sections_exploring[ship.destx][ship.desty] = -1
-                max_dest_info = map_sections.max_dest(map_sections.get_section_values(me, game_map), sections_exploring, game_map.width, game_map.height)
+                max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height)
                 ship_destinations[ship.id] = max_dest_info[0]
                 ship.destx = max_dest_info[1]
                 ship.desty = max_dest_info[2]
@@ -81,8 +79,17 @@ while True:
                     move = game_map.naive_navigate(ship, ship_destinations[ship.id])
                     command_queue.append(ship.move(move))
             if ship_status[ship.id] == "exploring":
-                move = game_map.naive_navigate(ship, nav.collect_halite(game_map, ship.position))
-                command_queue.append(ship.move(move))
+                if check_sparse(game_map, ship.position):
+                    sections_exploring[ship.destx][ship.desty] = -1
+                    max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height)
+                    ship_destinations[ship.id] = max_dest_info[0]
+                    ship.destx = max_dest_info[1]
+                    ship.desty = max_dest_info[2]
+                    sections_exploring[ship.destx][ship.desty] = ship.id
+                    ship_status[ship.id] = "deploying"
+                else:
+                    move = game_map.naive_navigate(ship, nav.collect_halite(game_map, ship.position))
+                    command_queue.append(ship.move(move))
         else:
             command_queue.append(ship.stay_still())
 
