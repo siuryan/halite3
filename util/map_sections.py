@@ -24,4 +24,4 @@ def max_dest(section_values, sections_exploring, width, height):
             if sections_exploring[x][y] == -1 and section_values > max:
                 max_x = x
                 max_y = y
-    return Position(x * width, y * height), x, y
+    return Position(x * width / 8, y * width / 8), x, y
