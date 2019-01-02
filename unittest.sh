@@ -1,3 +1,3 @@
 for f in tests/*.py; do
-  python3 "$f" -v
+    python3 "$f" -v
 done

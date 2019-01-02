@@ -7,6 +7,8 @@ import logging
 import hlt
 from hlt import constants
 
+from util import nav
+
 # This game object contains the initial game state.
 game = hlt.Game()
 
@@ -69,8 +71,7 @@ while True:
         # For each of your ships, move randomly if the ship is on a low halite location or the ship is full.
         #   Else, collect halite.
         if game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full:
-            command_queue.append(
-                ship.move(random.choice(["n", "s", "e", "w"])))
+            command_queue.append(ship.move(nav.collect_halite(game_map, ship.position)))
         else:
             command_queue.append(ship.stay_still())
 
