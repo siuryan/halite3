@@ -52,7 +52,7 @@ while True:
                 ship_destinations[ship.id] = map_sections.max_dest(section_values, map_sections.get_section_values(me, game_map), game_map.width, game_map.height)
                 ship_status[ship.id] = "deploying"
             else:
-                move = game_map.naive_navigate(ship, me.shipyard.position)
+                move = nav.returning(game_map, ship, me.shipyard)
                 command_queue.append(ship.move(move))
                 continue
         elif ship.halite_amount >= constants.MAX_HALITE * .9:
@@ -60,14 +60,18 @@ while True:
 
         # For each of your ships, move randomly if the ship is on a low halite location or the ship is full.
         #   Else, collect halite.
-        if game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full:
+        if ship.is_full:
             if ship_status[ship.id] == "deploying":
-                if ship.position == ship_destinations[ship.id]:
+                logging.info(ship.destinations[ship.id])
+                if ship.position == me.shipyard.position:
+                    move = nav.exiting(game_map, ship, me.shipyard, ship_destinations[ship.id])
+                    command_queue.append(ship.move(move))
+                elif ship.position == ship_destinations[ship.id]:
                     ship_status[ship.id] = "exploring"
                 else:
                     move = game_map.naive_navigate(ship, ship_destinations[ship.id])
                     command_queue.append(ship.move(move))
-            if ship_status[ship.id] = "exploring":
+            if ship_status[ship.id] == "exploring":
                 move = game_map.naive_navigate(ship, nav.collect_halite(game_map, ship.position))
                 command_queue.append(ship.move(move))
         else:
