@@ -14,10 +14,10 @@ def collect_halite(game_map, position):
 
 def returning(game_map, ship, shipyard):
     if ship.position.y == shipyard.position.y:
-        if game_map.naive_navigate(ship, ship.position + Position(0, 1)) != Direction.Still:
-            return game_map.naive_navigate(ship, ship.position + Position(0, 1))
-        elif game_map.naive_navigate(ship, ship.position + Position(0, -1)) != Direction.Still:
-            return game_map.naive_navigate(ship, ship.position + Position(0, -1))
+        direction = game_map.naive_navigate(ship, ship.position + Position(0, 1))
+        if direction != Direction.Still:
+            return direction
+        return game_map.naive_navigate(ship, ship.position + Position(0, -1))
     if game_map.calculate_distance(shipyard.position, ship.position) == 1:
         return game_map.naive_navigate(ship, shipyard.position)
 
@@ -35,3 +35,6 @@ def exiting(game_map, ship, shipyard, destination):
     if game_map.calculate_distance(w_exit, destination) < game_map.calculate_distance(e_exit, destination):
         return game_map.naive_navigate(ship, w_exit)
     return game_map.naive_navigate(ship, e_exit)
+
+def should_collapse(game_map, ship, shipyard):
+    return
