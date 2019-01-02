@@ -11,3 +11,15 @@ def collect_halite(game_map, position):
         return surroundings[halite_amounts.index(max(halite_amounts))]
 
     return Position(0, 0)
+
+def returning(game_map, ship, shipyard):
+    if game_map.calculate_distance(shipyard.position, ship.position) == 1:
+        return game_map.get_unsafe_moves(ship.position, shipyard.position)[0]
+
+    n_entrance = shipyard.position + Position(0, 1)
+    s_entrance = shipyard.position + Position(0, -1)
+
+    if game_map.calculate_distance(n_entrance, ship.position) < game_map.calculate_distance(s_entrance, ship.position):
+        return game_map.naive_navigate(ship, n_entrance)
+
+    return game_map.naive_navigate(ship, s_entrance)
