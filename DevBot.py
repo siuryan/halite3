@@ -12,19 +12,28 @@ game = hlt.Game()
 
 me = game.me
 game_map = game.game_map
-section_values = [ [], [], [], [], [], [], [], [] ]
-for x in range(0, 8):
-    for y in range(0, 8):
-        section_values[x].append(0)
-        start_x = x * game_map.width / 8
-        start_y = y * game_map.height / 8
-        end_x = (x + 1) * game_map.width / 8
-        end_y = (y + 1) * game_map.height / 8
-        for section_x in range(start_x, end_x):
-            for section_y in range(start_y, end_y):
-                section_values[x][y] += 1.0 * (game_map[Position(section_x, section_y)].halite_amount) / game_map.calculate_distance(me.shipyard.position, Position(section_x, section_y))
 
+sections_exploring = []
+for i in range(0, 8):
+    sections_exploring.append([-1, -1, -1, -1, -1, -1, -1, -1])
 
+def get_section_values():
+    section_values = []
+    for i in range(0, 8):
+        section_values.append([0, 0, 0, 0, 0, 0, 0, 0])
+
+    for x in range(0, 8):
+        for y in range(0, 8):
+            start_x = x * game_map.width / 8
+            start_y = y * game_map.height / 8
+            end_x = (x + 1) * game_map.width / 8
+            end_y = (y + 1) * game_map.height / 8
+            for section_x in range(start_x, end_x):
+                for section_y in range(start_y, end_y):
+                    section_values[x][y] += 1.0 * (game_map[Position(section_x, section_y)].halite_amount) / game_map.calculate_distance(me.shipyard.position, Position(section_x, section_y))
+    return section_values
+
+section_values = get_section_values()
 
 # Respond with your name.
 game.ready("StarterBot")
