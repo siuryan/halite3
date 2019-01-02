@@ -27,7 +27,8 @@ def max_dest(section_values, sections_exploring, width, height, shipyard_positio
                 max_y = y
                 max = section_values[x][y]
     ret_position = Position(max_x * width / 8 + random.randint(-4, 4), max_y * width / 8 + random.randint(-4, 4))
-    if ret_position == shipyard_position:
+    if ret_position.x == shipyard_position.x:
         ret_position.x += random.randint(1, 5)
+    if ret_position.y == shipyard.position.y:
         ret_position.y += random.randint(1, 5)
     return ret_position, max_x, max_y
