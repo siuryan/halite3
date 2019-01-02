@@ -3,6 +3,15 @@ from hlt import constants
 from hlt import Direction
 from hlt import Position
 
+def check_sparse(game_map, position):
+    surroundings = position.get_surrounding_cardinals()
+    halite_amounts = list(map(lambda pos: game_map[pos].halite_amount, surroundings))
+
+    if max(halite_amounts) < MAX_HALITE/20:
+        return True
+
+    return False
+
 def collect_halite(game_map, position):
     surroundings = position.get_surrounding_cardinals()
     halite_amounts = list(map(lambda pos: game_map[pos].halite_amount, surroundings))
