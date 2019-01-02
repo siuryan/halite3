@@ -47,3 +47,16 @@ def exiting(game_map, ship, shipyard, destination):
 
 def should_collapse(game_map, ship, shipyard, turn):
     return game_map.calculate_distance(ship.position, shipyard.position) + 5 >= constants.MAX_TURNS - turn
+
+'''
+def naive_navigate_no_shipyard(game_map, ship, destination):
+    for direction in game_map.get_unsafe_moves(ship.position, destination):
+        target_pos = ship.position.directional_offset(direction)
+        if game_map[target_pos].has_structure:
+            return
+        if not game_map[target_pos].is_occupied and game_map[target_pos].has_structure:
+            game_map[target_pos].mark_unsafe(ship)
+            return direction
+
+    return Direction.Still
+'''

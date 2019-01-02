@@ -52,12 +52,12 @@ while True:
             ship_status[ship.id] = "deploying"
 
         if ship_status[ship.id] == "collapse":
-            if game_map.calculate_distance(ship, me.shipyard) == 1:
+            if game_map.calculate_distance(ship.position, me.shipyard.position) == 1:
                 move = game_map.get_unsafe_moves(ship.position, me.shipyard.position)[0]
                 command_queue.append(ship.move(move))
                 continue
 
-            move = game_map.naive_navigate(ship, me.shipyard)
+            move = game_map.naive_navigate(ship, me.shipyard.position)
             command_queue.append(ship.move(move))
             continue
 
