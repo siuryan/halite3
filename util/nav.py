@@ -7,7 +7,7 @@ def check_sparse(game_map, position):
     surroundings = position.get_surrounding_cardinals()
     halite_amounts = list(map(lambda pos: game_map[pos].halite_amount, surroundings))
 
-    if max(halite_amounts) < MAX_HALITE/20:
+    if max(halite_amounts) < constants.MAX_HALITE/20:
         return True
 
     return False
@@ -45,5 +45,5 @@ def exiting(game_map, ship, shipyard, destination):
         return game_map.naive_navigate(ship, w_exit)
     return game_map.naive_navigate(ship, e_exit)
 
-def should_collapse(game_map, ship, shipyard):
-    return
+def should_collapse(game_map, ship, shipyard, turn):
+    return game_map.calculate_distance(ship.position, shipyard.position) + 5 >= constants.MAX_TURNS - turn
