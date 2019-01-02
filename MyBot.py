@@ -44,15 +44,15 @@ while True:
         if ship.id not in ship_status:
             # Send it to the most optimal section of the map
             ship_destinations[ship.id] = map_sections.max_dest(section_values, map_sections.get_section_values(me, game_map), game_map.width, game_map.height)
-            sections_exploring[ship_destinations[ship.id].x/width][ship_destinations[ship.id].y/height] = ship.id
+            sections_exploring[int(ship_destinations[ship.id].x/game_map.width)][int(ship_destinations[ship.id].y/game_map.height)] = ship.id
             ship_status[ship.id] = "deploying"
 
         if ship_status[ship.id] == "returning":
             if ship.position == me.shipyard.position:
                 # Re-deploy it to an optimal section of the map
-                sections_exploring[ship_destinations[ship.id].x/width][ship_destinations[ship.id].y/height] = -1
+                sections_exploring[int(ship_destinations[ship.id].x/game_map.width)][int(ship_destinations[ship.id].y/game_map.height)] = -1
                 ship_destinations[ship.id] = map_sections.max_dest(section_values, map_sections.get_section_values(me, game_map), game_map.width, game_map.height)
-                sections_exploring[ship_destinations[ship.id].x/width][ship_destinations[ship.id].y/height] = ship.id
+                sections_exploring[int(ship_destinations[ship.id].x/game_map.width)][int(ship_destinations[ship.id].y/game_map.height)] = ship.id
                 ship_status[ship.id] = "deploying"
             else:
                 move = nav.returning(game_map, ship, me.shipyard)
