@@ -14,7 +14,7 @@ def get_section_values(me, game_map):
             end_y = (y + 1) * game_map.height / 8
             for section_x in range(int(start_x), int(end_x)):
                 for section_y in range(int(start_y), int(end_y)):
-                    section_values[x][y] += 1.0 * (game_map[Position(section_x, section_y)].halite_amount) / (game_map.calculate_distance(me.shipyard.position, Position(section_x, section_y)) + 1)**(0.5)
+                    section_values[x][y] += 1.0 * (game_map[Position(section_x, section_y)].halite_amount) / (game_map.calculate_distance(me.shipyard.position, Position(section_x, section_y)) + 1)
     return section_values
 
 def max_dest(section_values, sections_exploring, width, height):
@@ -24,4 +24,5 @@ def max_dest(section_values, sections_exploring, width, height):
             if sections_exploring[x][y] == -1 and section_values[x][y] > max:
                 max_x = x
                 max_y = y
+                max = section_values[x][y]
     return Position(max_x * width / 8, max_y * width / 8), max_x, max_y
