@@ -6,6 +6,7 @@ import logging
 # Import the Halite SDK, which will let you interact with the game.
 import hlt
 from hlt import constants
+from hlt import Position
 
 from util import nav
 
@@ -14,6 +15,7 @@ game = hlt.Game()
 
 me = game.me
 game_map = game.game_map
+
 section_values = [ [], [], [], [], [], [], [], [] ]
 for x in range(0, 8):
     for y in range(0, 8):
@@ -22,14 +24,12 @@ for x in range(0, 8):
         start_y = y * game_map.height / 8
         end_x = (x + 1) * game_map.width / 8
         end_y = (y + 1) * game_map.height / 8
-        for section_x in range(start_x, end_x):
-            for section_y in range(start_y, end_y):
-                section_values[x][y] += 1.0 * (game_map[Position(section_x, section_y)].halite_amount) / game_map.calculate_distance(me.shipyard.position, Position(section_x, section_y))
-
-
+        for section_x in range(int(start_x), int(end_x)):
+            for section_y in range(int(start_y), int(end_y)):
+                section_values[x][y] += 1.0 * (game_map[Position(section_x, section_y)].halite_amount) / (game_map.calculate_distance(me.shipyard.position, Position(section_x, section_y)) + 1)
 
 # Respond with your name.
-game.ready("StarterBot")
+game.ready("v1")
 
 ship_status = {}
 
@@ -62,7 +62,8 @@ while True:
         # For each of your ships, move randomly if the ship is on a low halite location or the ship is full.
         #   Else, collect halite.
         if game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full:
-            command_queue.append(ship.move(nav.collect_halite(game_map, ship.position)))
+            move = game_map.naive_navigate(ship, nav.collect_halite(game_map, ship.position))
+            command_queue.append(ship.move(move))
         else:
             command_queue.append(ship.stay_still())
 

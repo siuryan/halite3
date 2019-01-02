@@ -8,6 +8,6 @@ def collect_halite(game_map, position):
     halite_amounts = list(map(lambda pos: game_map[pos].halite_amount, surroundings))
 
     if max(halite_amounts) - .1 * game_map[position].halite_amount > game_map[position].halite_amount:
-        return Direction.get_all_cardinals()[halite_amounts.index(max(halite_amounts))]
+        return surroundings[halite_amounts.index(max(halite_amounts))]
 
-    return Direction.Still
+    return Position(0, 0)
