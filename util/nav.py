@@ -14,11 +14,23 @@ def check_sparse(game_map, position):
 
     return False
 
-def collect_halite(game_map, ship):
-    surroundings = ship.position.get_surrounding_cardinals()
-    halite_amounts = list(map(lambda pos: game_map[pos].halite_amount, surroundings))
+def check_inspiration(game_map, me, position):
+    cells = [item for sublist in game_map._cells for item in sublist]
+    surroundings = filter(lambda x: game_map.calculate_distance(position, x.position) <= 4, cells)
 
-    if max(halite_amounts) - .1 * game_map[ship.position].halite_amount > game_map[ship.position].halite_amount:
+    for cell in surroundings:
+        if cell.ship and cell.ship.owner != me.id:
+            return True
+    return False
+
+def collect_halite(game_map, me, ship):
+    surroundings = ship.position.get_surrounding_cardinals()
+    halite_amounts = list(map(
+        lambda pos: game_map[pos].halite_amount * 3 if check_inspiration(game_map, me, pos) else game_map[pos].halite_amount, surroundings
+    ))
+
+    current_cell_halite_amount = game_map[ship.position].halite_amount * 3 if check_inspiration(game_map, me, ship.position) else game_map[ship.position].halite_amount
+    if max(halite_amounts) - .1 * game_map[ship.position].halite_amount > current_cell_halite_amount:
         return surroundings[halite_amounts.index(max(halite_amounts))]
 
     return Position(0, 0)

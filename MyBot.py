@@ -6,6 +6,7 @@ import logging
 # Import the Halite SDK, which will let you interact with the game.
 import hlt
 from hlt import constants
+from hlt.entity import Ship
 
 from util import nav
 from util import map_sections
@@ -38,7 +39,6 @@ while True:
 
     for ship in me.get_ships():
         logging.info("Ship {} has {} halite.".format(ship.id, ship.halite_amount))
-        logging.info("Ship {} still for {} turns.".format(ship.id, ship.turns_still))
         logging.info("Ship {} is {}.".format(ship.id, ship_status[ship.id] if ship.id in ship_status else "no status"))
 
         if nav.should_collapse(game_map, ship, me.shipyard, game.turn_number):
@@ -99,7 +99,7 @@ while True:
                     sections_exploring[ship.destx][ship.desty] = ship.id
                     ship_status[ship.id] = "deploying"
                 else:
-                    move = game_map.naive_navigate(ship, nav.collect_halite(game_map, ship))
+                    move = game_map.naive_navigate(ship, nav.collect_halite(game_map, me, ship))
         else:
             #add to the dictionary
             if ship.position in Ship.next_move_squares:
