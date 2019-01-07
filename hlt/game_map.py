@@ -245,6 +245,7 @@ class GameMap:
             if not self[target_pos].is_occupied:
                 self[target_pos].mark_unsafe(ship)
                 return direction
+        return Direction.Still
 
     def naive_navigate(self, ship, destination):
         """
