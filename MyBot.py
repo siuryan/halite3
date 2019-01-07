@@ -116,13 +116,19 @@ while True:
         if len(Ship.next_move_squares[square]) > 1:
             for ship in Ship.next_move_squares[square][1:]:
                 Ship.next_move_squares[square].remove(ship)
+<<<<<<< HEAD
                 move = game_map.get_unsafe_moves(ship.position, nav.collect_halite(game_map, ship))[0]
+=======
+                move = game_map.naivest_navigate(ship, nav.collect_halite(game_map, me, ship))
+>>>>>>> 68f481531cedd202c6ca65aeb41266ba316162c1
                 command_queue.append(ship.move(move))
 
     # If you're on the first turn and have enough halite, spawn a ship.
     # Don't spawn a ship if you currently have a ship at port, though.
     if game.turn_number <= 200 and me.halite_amount >= constants.SHIP_COST and (not game_map[me.shipyard].is_occupied or (game_map[me.shipyard].is_occupied and game_map[me.shipyard].ship.owner != me.id)):
         command_queue.append(me.shipyard.spawn())
+
+    logging.info(command_queue)
 
     # Send your moves back to the game environment, ending this turn.
     game.end_turn(command_queue)
