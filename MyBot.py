@@ -36,6 +36,7 @@ while True:
 
     # A command queue holds all the commands you will run this turn.
     command_queue = []
+    Ship.next_move_squares ={}
 
     for ship in me.get_ships():
         logging.info("Ship {} has {} halite.".format(ship.id, ship.halite_amount))
@@ -109,7 +110,7 @@ while True:
 
     for square in Ship.next_move_squares:
         ship = Ship.next_move_squares[square][0]
-        move = game_map.naivest_navigate(ship, square)
+        move = game_map.naivest_navigate(ship, square.position)
         command_queue.append(ship.move(move))
         if len(Ship.next_move_squares[square]) > 1:
             for ship in Ship.next_move_squares[square][1:]:
