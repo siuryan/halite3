@@ -60,7 +60,8 @@ while True:
                 command_queue.append(ship.move(move))
                 continue
 
-            move = game_map.naive_navigate(ship, me.shipyard.position)
+            move = game_map.naivest_navigate(ship, me.shipyard.position)
+            command_queue.append(ship.move(move))
             continue
 
         if ship_status[ship.id] == "returning":
@@ -110,12 +111,12 @@ while True:
 
     for square in Ship.next_move_squares:
         ship = Ship.next_move_squares[square][0]
-        move = game_map.naivest_navigate(ship, square.position)
+        move = game_map.get_unsafe_moves(ship.position, square.position)[0]
         command_queue.append(ship.move(move))
         if len(Ship.next_move_squares[square]) > 1:
             for ship in Ship.next_move_squares[square][1:]:
                 Ship.next_move_squares[square].remove(ship)
-                move = game_map.naivest_navigate(ship, nav.collect_halite(game_map, ship))
+                move = game_map.get_unsafe_moves(ship.position, nav.collect_halite(game_map, ship))[0]
                 command_queue.append(ship.move(move))
 
     # If you're on the first turn and have enough halite, spawn a ship.
