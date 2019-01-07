@@ -6,6 +6,7 @@ import logging
 # Import the Halite SDK, which will let you interact with the game.
 import hlt
 from hlt import constants
+from hlt.entity import Ship
 
 from util import nav
 from util import map_sections
