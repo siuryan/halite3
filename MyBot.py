@@ -2,6 +2,7 @@
 
 import random
 import logging
+from functools import reduce
 
 # Import the Halite SDK, which will let you interact with the game.
 import hlt
@@ -20,6 +21,10 @@ game_map = game.game_map
 sections_exploring = []
 for i in range(0, 8):
     sections_exploring.append([-1, -1, -1, -1, -1, -1, -1, -1])
+
+cells = [item for sublist in game_map._cells for item in sublist]
+map_density = reduce(lambda total, cell: total + cell.halite_amount) / len(cells)
+#if map_density > 125:
 
 # Respond with your name.
 game.ready("v1")
@@ -47,7 +52,7 @@ while True:
 
         if ship.id not in ship_status:
             # Send it to the most optimal section of the map
-            max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
+            max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map, game.turn_number), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
             ship_destinations[ship.id] = game_map.normalize(max_dest_info[0])
             ship.destx = max_dest_info[1]
             ship.desty = max_dest_info[2]
@@ -71,7 +76,7 @@ while True:
             if ship.position == me.shipyard.position:
                 # Re-deploy it to an optimal section of the map
                 sections_exploring[ship.destx][ship.desty] = -1
-                max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
+                max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map, game.turn_number), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
                 ship_destinations[ship.id] = game_map.normalize(max_dest_info[0])
                 ship.destx = max_dest_info[1]
                 ship.desty = max_dest_info[2]
@@ -99,7 +104,7 @@ while True:
                 '''
                 if nav.check_sparse(game_map, ship.position):
                     sections_exploring[ship.destx][ship.desty] = -1
-                    max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
+                    max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map, game.turn_number), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
                     ship_destinations[ship.id] = game_map.normalize(max_dest_info[0])
                     ship.destx = max_dest_info[1]
                     ship.desty = max_dest_info[2]
