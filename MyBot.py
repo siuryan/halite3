@@ -90,7 +90,7 @@ while True:
                 else:
                     move = game_map.naive_navigate(ship, ship_destinations[ship.id])
             if ship_status[ship.id] == "exploring":
-                if nav.check_sparse(game_map, ship.position) or ship.turns_still > 5:
+                if nav.check_sparse(game_map, ship.position):
                     sections_exploring[ship.destx][ship.desty] = -1
                     max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
                     ship_destinations[ship.id] = game_map.normalize(max_dest_info[0])
