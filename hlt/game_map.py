@@ -88,6 +88,12 @@ class MapCell:
         self.ship = None
         self.structure = None
 
+    def __eq__(self, other):
+        return self.position == other.position
+
+    def __hash__(self):
+        return hash(str(self.position))
+
     @property
     def is_empty(self):
         """
