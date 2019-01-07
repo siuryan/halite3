@@ -36,6 +36,7 @@ while True:
 
     # A command queue holds all the commands you will run this turn.
     command_queue = []
+    Ship.next_move_squares ={}
 
     for ship in me.get_ships():
         logging.info("Ship {} has {} halite.".format(ship.id, ship.halite_amount))
