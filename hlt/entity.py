@@ -51,6 +51,7 @@ class Ship(Entity):
     """
     Ship class to house ship entities
     """
+    next_move_squares = {}
     def __init__(self, owner, id, position, halite_amount):
         super().__init__(owner, id, position)
         self.halite_amount = halite_amount
