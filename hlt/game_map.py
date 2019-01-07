@@ -240,7 +240,7 @@ class GameMap:
             if not self[target_pos].is_occupied:
                 self[target_pos].mark_unsafe(ship)
                 return direction
-        for direction in ['n','s','e','w','o']:
+        for direction in [Direction.North, Direction.South, Direction.East, Direction.West, Direction.Still]:
             target_pos = ship.position.directional_offset(direction)
             if not self[target_pos].is_occupied:
                 self[target_pos].mark_unsafe(ship)
