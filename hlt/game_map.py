@@ -229,11 +229,23 @@ class GameMap:
         """
         # No need to normalize destination, since get_unsafe_moves
         # does that
+        directions = []
         for direction in self.get_unsafe_moves(ship.position, destination):
             target_pos = ship.position.directional_offset(direction)
             if not self[target_pos].is_occupied:
-                self[target_pos].mark_unsafe(ship)
-                return direction
+                directions.append(direction)
+
+        if directions:
+            max = 0
+            for direction in directions:
+                target_pos = ship.position.directional_offset(direction)
+                if target_pos.halite_amount >= max:
+                    max = target_pos.halite_amount
+                    final_direction = direction
+
+            target_pos = ship.position.directional_offset(final_direction)
+            self[target_pos].mark_unsafe(ship)
+            return final_direction
 
         return Direction.Still
 
