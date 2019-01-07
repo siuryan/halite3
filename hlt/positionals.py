@@ -105,6 +105,9 @@ class Position:
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __hash__(self):
+        return hash(str(self))
+
     def __repr__(self):
         return "{}({}, {})".format(self.__class__.__name__,
                                    self.x,

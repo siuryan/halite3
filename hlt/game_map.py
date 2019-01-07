@@ -244,7 +244,7 @@ class GameMap:
             target_pos = ship.position.directional_offset(direction)
             if not self[target_pos].is_occupied:
                 self[target_pos].mark_unsafe(ship)
-                return Direction.convert(direction)
+                return direction
 
     def naive_navigate(self, ship, destination):
         """
@@ -260,15 +260,15 @@ class GameMap:
         for direction in self.get_unsafe_moves(ship.position, destination):
             target_pos = ship.position.directional_offset(direction)
             if self[target_pos].halite_amount >= maximum:
-                max = self[target_pos].halite_amount
+                maximum = self[target_pos].halite_amount
                 final_direction = direction
 
         target_pos = ship.position.directional_offset(final_direction)
         self[target_pos].mark_unsafe(ship)
-        if self[target_pos] in Ship.next_move_squares:
-            Ship.next_move_squares[self[target_pos]].append(ship)
+        if self.normalize(target_pos) in Ship.next_move_squares:
+            Ship.next_move_squares[self.normalize(target_pos)].append(ship)
         else:
-            Ship.next_move_squares[self[target_pos]] = [ship]
+            Ship.next_move_squares[self.normalize(target_pos)] = [ship]
         return final_direction
 
 

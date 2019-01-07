@@ -64,7 +64,7 @@ while True:
             command_queue.append(ship.move(move))
             continue
 
-        if ship_status[ship.id] == "returning":
+        if ship_status[ship.id] == "returning" and ship.halite_amount >= game_map[ship.position].halite_amount * 0.1:
             if ship.position == me.shipyard.position:
                 # Re-deploy it to an optimal section of the map
                 sections_exploring[ship.destx][ship.desty] = -1
@@ -84,7 +84,7 @@ while True:
 
         # For each of your ships, move randomly if the ship is on a low halite location or the ship is full.
         #   Else, collect halite.
-        if game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full:
+        if game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full and ship.halite_amount >= game_map[ship.position].halite_amount * 0.1:
             if ship_status[ship.id] == "deploying":
                 logging.info(ship_destinations[ship.id])
                 if ship.position == me.shipyard.position:
@@ -107,25 +107,27 @@ while True:
                     move = game_map.naive_navigate(ship, nav.collect_halite(game_map, me, ship))
         else:
             #add to the dictionary
-            if game_map[ship.position] in Ship.next_move_squares:
-                Ship.next_move_squares[game_map[ship.position]].insert(0, ship)
+            if game_map.normalize(ship.position) in Ship.next_move_squares:
+                Ship.next_move_squares[game_map.normalize(ship.position)].insert(0, ship)
             else:
-                Ship.next_move_squares[game_map[ship.position]] = [ship]
+                Ship.next_move_squares[game_map.normalize(ship.position)] = [ship]
 
-    for square in Ship.next_move_squares:
+    for position in Ship.next_move_squares:
         logging.info(Ship.next_move_squares)
-        logging.info(square)
-        ship = Ship.next_move_squares[square][0]
+        logging.info(position)
+        ship = Ship.next_move_squares[position][0]
         logging.info(ship)
-        if ship.position == square.position:
+        if ship.position == position:
             move = 'o'
         else:
-            move = game_map.get_unsafe_moves(ship.position, square.position)[0]
+            move = game_map.get_unsafe_moves(ship.position, position)[0]
         command_queue.append(ship.move(move))
-        if len(Ship.next_move_squares[square]) > 1:
-            for ship in Ship.next_move_squares[square][1:]:
-                Ship.next_move_squares[square].remove(ship)
+        if len(Ship.next_move_squares[position]) > 1:
+            for ship in Ship.next_move_squares[position][1:]:
+                logging.info(ship.id)
+                Ship.next_move_squares[position].remove(ship)
                 move = game_map.naivest_navigate(ship, nav.collect_halite(game_map, me, ship))
+                logging.info(move)
                 command_queue.append(ship.move(move))
 
     # If you're on the first turn and have enough halite, spawn a ship.
