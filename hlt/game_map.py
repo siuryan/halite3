@@ -219,6 +219,24 @@ class GameMap:
                                   else Direction.invert(y_cardinality))
         return possible_moves
 
+
+    def naivest_navigate(self, ship, destination):
+        """
+        Returns a singular safe move towards the destination.
+        :param ship: The ship to move.
+        :param destination: Ending position
+        :return: A direction.
+        """
+        # No need to normalize destination, since get_unsafe_moves
+        # does that
+        for direction in self.get_unsafe_moves(ship.position, destination):
+            target_pos = ship.position.directional_offset(direction)
+            if not self[target_pos].is_occupied:
+                self[target_pos].mark_unsafe(ship)
+                return direction
+
+        return Direction.Still
+
     def naive_navigate(self, ship, destination):
         """
         Returns a singular safe move towards the destination.
@@ -229,25 +247,21 @@ class GameMap:
         """
         # No need to normalize destination, since get_unsafe_moves
         # does that
-        directions = []
+        maximum = 0
         for direction in self.get_unsafe_moves(ship.position, destination):
             target_pos = ship.position.directional_offset(direction)
-            if not self[target_pos].is_occupied:
-                directions.append(direction)
+            if self[target_pos].halite_amount >= maximum:
+                max = self[target_pos].halite_amount
+                final_direction = direction
 
-        if directions:
-            max = 0
-            for direction in directions:
-                target_pos = ship.position.directional_offset(direction)
-                if self[target_pos].halite_amount >= max:
-                    max = self[target_pos].halite_amount
-                    final_direction = direction
+        target_pos = ship.position.directional_offset(final_direction)
+        self.mark_unsafe(ship)
+        if self[target_pos] in Ship.next_move_squares:
+            Ship.next_move_squares[self[target_pos]].append(ship)
+        else:
+            Ship.next_move_squares[self[target_pos]] = [ship]
+        return final_direction
 
-            target_pos = ship.position.directional_offset(final_direction)
-            self[target_pos].mark_unsafe(ship)
-            return final_direction
-
-        return Direction.Still
 
     @staticmethod
     def _generate():
