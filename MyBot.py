@@ -104,13 +104,16 @@ while True:
                     move = game_map.naive_navigate(ship, nav.collect_halite(game_map, me, ship))
         else:
             #add to the dictionary
-            if ship.position in Ship.next_move_squares:
-                Ship.next_move_squares.insert(0, ship.position)
+            if game_map[ship.position] in Ship.next_move_squares:
+                Ship.next_move_squares[game_map[ship.position]].insert(0, ship)
             else:
-                Ship.next_move_squares = [ship.position]
+                Ship.next_move_squares[game_map[ship.position]] = [ship]
 
     for square in Ship.next_move_squares:
+        logging.info(Ship.next_move_squares)
+        logging.info(square)
         ship = Ship.next_move_squares[square][0]
+        logging.info(ship)
         move = game_map.get_unsafe_moves(ship.position, square.position)[0]
         command_queue.append(ship.move(move))
         if len(Ship.next_move_squares[square]) > 1:
