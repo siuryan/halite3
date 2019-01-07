@@ -239,7 +239,7 @@ class GameMap:
             max = 0
             for direction in directions:
                 target_pos = ship.position.directional_offset(direction)
-                if target_pos.halite_amount >= max:
+                if self[target_pos].halite_amount >= max:
                     max = self[target_pos].halite_amount
                     final_direction = direction
 
