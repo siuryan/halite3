@@ -122,7 +122,7 @@ while True:
         if len(Ship.next_move_squares[square]) > 1:
             for ship in Ship.next_move_squares[square][1:]:
                 Ship.next_move_squares[square].remove(ship)
-                move = game_map.naivest_navigate(ship.position, nav.collect_halite(game_map, ship))
+                move = game_map.naivest_navigate(ship.position, nav.collect_halite(game_map, me, ship))
                 command_queue.append(ship.move(move))
 
     # If you're on the first turn and have enough halite, spawn a ship.
