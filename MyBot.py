@@ -60,7 +60,8 @@ while True:
                 command_queue.append(ship.move(move))
                 continue
 
-            move = game_map.naive_navigate(ship, me.shipyard.position)
+            move = game_map.naivest_navigate(ship, me.shipyard.position)
+            command_queue.append(ship.move(move))
             continue
 
         if ship_status[ship.id] == "returning":
@@ -122,6 +123,8 @@ while True:
     # Don't spawn a ship if you currently have a ship at port, though.
     if game.turn_number <= 200 and me.halite_amount >= constants.SHIP_COST and (not game_map[me.shipyard].is_occupied or (game_map[me.shipyard].is_occupied and game_map[me.shipyard].ship.owner != me.id)):
         command_queue.append(me.shipyard.spawn())
+
+    logging.info(command_queue)
 
     # Send your moves back to the game environment, ending this turn.
     game.end_turn(command_queue)
