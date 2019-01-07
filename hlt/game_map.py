@@ -255,7 +255,7 @@ class GameMap:
                 final_direction = direction
 
         target_pos = ship.position.directional_offset(final_direction)
-        self.mark_unsafe(ship)
+        self[target_pos].mark_unsafe(ship)
         if self[target_pos] in Ship.next_move_squares:
             Ship.next_move_squares[self[target_pos]].append(ship)
         else:
