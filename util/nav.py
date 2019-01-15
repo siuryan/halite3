@@ -33,6 +33,8 @@ def collect_halite(game_map, me, ship):
     if max(halite_amounts) - .1 * game_map[ship.position].halite_amount > current_cell_halite_amount:
         return surroundings[halite_amounts.index(max(halite_amounts))]
 
+    if current_cell_halite_amount == 0:
+        return [Direction.North, Direction.South, Direction.East, Direction.West][random.randint(0, 4)]
     return ship.position
 
 def returning(game_map, ship, shipyard):
