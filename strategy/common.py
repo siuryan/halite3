@@ -20,7 +20,7 @@ def spawn_ship(game, me, command_queue, cells):
     halites = [cell.halite_amount for cell in cells]
     map_density = reduce(lambda total, halite: total + halite, halites) / len(cells)
 
-    if nav.should_spawn(map_density, game.turn_number) and \
+    if nav.should_spawn(game, me, map_density, game.turn_number) and \
         me.halite_amount >= constants.SHIP_COST and (not game.game_map[me.shipyard].is_occupied or \
         (game.game_map[me.shipyard].is_occupied and game.game_map[me.shipyard].ship.owner != me.id)):
         command_queue.append(me.shipyard.spawn())
