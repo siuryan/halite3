@@ -20,7 +20,7 @@ map_density = reduce(lambda total, halite: total + halite, cells) / len(cells) #
 
 if map_density > hlt.constants.HALITE_DENSITY_THRESHOLD:
     logging.info("DESTINATION STRATEGY")
-    destination_strategy(game)
+    explore_strategy(game)
 else:
     logging.info("EXPLORE STRATEGY")
     explore_strategy(game)

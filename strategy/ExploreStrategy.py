@@ -77,23 +77,7 @@ def explore_strategy(game):
                 else:
                     Ship.next_move_squares[game_map.normalize(ship.position)] = [ship]
 
-        for position in Ship.next_move_squares:
-            logging.info(Ship.next_move_squares)
-            logging.info(position)
-            ship = Ship.next_move_squares[position][0]
-            logging.info(ship)
-            if ship.position == position:
-                move = 'o'
-            else:
-                move = game_map.get_unsafe_moves(ship.position, position)[0]
-                command_queue.append(ship.move(move))
-            if len(Ship.next_move_squares[position]) > 1:
-                for ship in Ship.next_move_squares[position][1:]:
-                    logging.info(ship.id)
-                    Ship.next_move_squares[position].remove(ship)
-                    move = game_map.naivest_navigate(ship, nav.collect_halite(game_map, me, ship))
-                    logging.info(move)
-                    command_queue.append(ship.move(move))
+        common.handle_commands(game, me, command_queue)
 
         # If you're on the first turn and have enough halite, spawn a ship.
         # Don't spawn a ship if you currently have a ship at port, though.

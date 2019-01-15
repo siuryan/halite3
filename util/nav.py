@@ -68,4 +68,4 @@ def random_direction():
     return random.choice([Direction.North, Direction.South, Direction.East, Direction.West])
 
 def should_spawn(density):
-    return constants.HALITE_DENSITY_THRESHOLD
+    return density > constants.HALITE_DENSITY_THRESHOLD

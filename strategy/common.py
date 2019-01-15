@@ -1,7 +1,9 @@
 from functools import reduce
 
 import hlt
+import logging
 from hlt import constants
+from hlt.entity import Ship
 
 from util import nav
 
@@ -22,3 +24,22 @@ def spawn_ship(game, me, command_queue, cells):
         me.halite_amount >= constants.SHIP_COST and (not game.game_map[me.shipyard].is_occupied or \
         (game.game_map[me.shipyard].is_occupied and game.game_map[me.shipyard].ship.owner != me.id)):
         command_queue.append(me.shipyard.spawn())
+
+def handle_commands(game, me, command_queue):
+    for position in Ship.next_move_squares:
+        logging.info(Ship.next_move_squares)
+        logging.info(position)
+        ship = Ship.next_move_squares[position][0]
+        logging.info(ship)
+        if ship.position == position:
+            move = 'o'
+        else:
+            move = game.game_map.get_unsafe_moves(ship.position, position)[0]
+            command_queue.append(ship.move(move))
+        if len(Ship.next_move_squares[position]) > 1:
+            for ship in Ship.next_move_squares[position][1:]:
+                logging.info(ship.id)
+                Ship.next_move_squares[position].remove(ship)
+                move = game.game_map.naivest_navigate(ship, nav.collect_halite(game.game_map, me, ship))
+                logging.info(move)
+                command_queue.append(ship.move(move))
