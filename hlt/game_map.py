@@ -258,12 +258,20 @@ class GameMap:
         # No need to normalize destination, since get_unsafe_moves
         # does that
         maximum = 0
-        final_direction = self.naivest_navigate(ship, destination)
+        final_direction = Direction.Still
+        direction_found = False
         for direction in self.get_unsafe_moves(ship.position, destination):
             target_pos = ship.position.directional_offset(direction)
             if self.normalize(target_pos) not in Ship.next_move_squares and self[target_pos].halite_amount >= maximum:
                 maximum = self[target_pos].halite_amount
                 final_direction = direction
+                direction_found = True
+        if not direction_found:
+            for direction in [Direction.North, Direction.South, Direction.East, Direction.West]:
+                target_pos = ship.position.directional_offset(direction)
+                if self.normalize(target_pos) not in Ship.next_move_squares and self[target_pos].halite_amount >= maximum:
+                    maximum = self[target_pos].halite_amount
+                    final_direction = direction
 
         target_pos = ship.position.directional_offset(final_direction)
         self[target_pos].mark_unsafe(ship)
