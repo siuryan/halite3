@@ -34,7 +34,7 @@ def collect_halite(game_map, me, ship):
         return surroundings[halite_amounts.index(max(halite_amounts))]
 
     if current_cell_halite_amount == 0:
-        return [Direction.North, Direction.South, Direction.East, Direction.West][random.randint(0, 4)]
+        return ship.position.directional_offset([Direction.North, Direction.South, Direction.East, Direction.West][random.randint(0, 4)])
     return ship.position
 
 def returning(game_map, ship, shipyard):
