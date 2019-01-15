@@ -13,6 +13,7 @@ def load_constants(constants):
     global EXTRACT_RATIO, MOVE_COST_RATIO
     global INSPIRATION_ENABLED, INSPIRATION_RADIUS, INSPIRATION_SHIP_COUNT
     global INSPIRED_EXTRACT_RATIO, INSPIRED_BONUS_MULTIPLIER, INSPIRED_MOVE_COST_RATIO
+    global HALITE_DENSITY_THRESHOLD
 
     """The cost to build a single ship."""
     SHIP_COST = constants['NEW_ENTITY_ENERGY_COST']
@@ -58,3 +59,5 @@ def load_constants(constants):
 
     """An inspired ship instead spends 1/X% halite to move."""
     INSPIRED_MOVE_COST_RATIO = constants['INSPIRED_MOVE_COST_RATIO']
+
+    HALITE_DENSITY_THRESHOLD = 150
