@@ -23,4 +23,4 @@ if map_density > hlt.constants.HALITE_DENSITY_THRESHOLD:
     destination_strategy(game)
 else:
     logging.info("EXPLORE STRATEGY")
-    explore_strategy(game)
+    destination_strategy(game)

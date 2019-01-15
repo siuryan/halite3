@@ -34,7 +34,7 @@ def collect_halite(game_map, me, ship):
         return surroundings[halite_amounts.index(max(halite_amounts))]
 
     if current_cell_halite_amount == 0:
-        return ship.position.directional_offset([Direction.North, Direction.South, Direction.East, Direction.West][random.randint(0, 4)])
+        return ship.position.directional_offset([Direction.North, Direction.South, Direction.East, Direction.West][random.randint(0, 3)])
     return ship.position
 
 def returning(game_map, ship, shipyard):
@@ -67,5 +67,5 @@ def should_collapse(game_map, ship, shipyard, turn):
 def random_direction():
     return random.choice([Direction.North, Direction.South, Direction.East, Direction.West])
 
-def should_spawn(density):
-    return density > constants.HALITE_DENSITY_THRESHOLD
+def should_spawn(density, turn):
+    return turn < 150 or (density > constants.HALITE_DENSITY_THRESHOLD and turn < 200)

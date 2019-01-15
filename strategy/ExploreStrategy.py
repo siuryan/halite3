@@ -18,6 +18,8 @@ def explore_strategy(game):
     
     ship_status = {}
 
+    cells = [item for sublist in game.game_map._cells for item in sublist]
+
     # Respond with your name.
     game.ready("v1")
 
@@ -32,19 +34,17 @@ def explore_strategy(game):
         command_queue = []
         Ship.next_move_squares = {}
 
-        cells = [item for sublist in game_map._cells for item in sublist]
-
         for ship in me.get_ships():
             logging.info("Ship {} has {} halite.".format(ship.id, ship.halite_amount))
             logging.info("Ship {} is {}.".format(ship.id, ship_status[ship.id] if ship.id in ship_status else "no status"))
 
             if nav.should_collapse(game_map, ship, me.shipyard, game.turn_number):
-                ship_status[ship.id] = "collapse"
+                ship_status[ship.id] = "collapsing"
 
             if ship.id not in ship_status:
                 ship_status[ship.id] = "exploring"
 
-            if ship_status[ship.id] == "collapse":
+            if ship_status[ship.id] == "collapsing":
                 common.collapse(game, me, command_queue, ship)
                 continue
 

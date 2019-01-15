@@ -43,7 +43,7 @@ def destination_strategy(game):
             logging.info("Ship {} is {}.".format(ship.id, ship_status[ship.id] if ship.id in ship_status else "no status"))
 
             if nav.should_collapse(game_map, ship, me.shipyard, game.turn_number):
-                ship_status[ship.id] = "collapse"
+                ship_status[ship.id] = "collapsing"
 
             if ship.id not in ship_status:
                 # Send it to the most optimal section of the map
@@ -54,7 +54,7 @@ def destination_strategy(game):
                 sections_exploring[ship.destx][ship.desty] = ship.id
                 ship_status[ship.id] = "deploying"
 
-            if ship_status[ship.id] == "collapse":
+            if ship_status[ship.id] == "collapsing":
                 common.collapse(game, me, command_queue, ship)
                 continue
 
