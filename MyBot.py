@@ -18,7 +18,7 @@ game_map = game.game_map
 cells = [item.halite_amount for sublist in game_map._cells for item in sublist]
 map_density = reduce(lambda total, halite: total + halite, cells) / len(cells) # spawn number of ships based on this
 
-if map_density > 500:
+if map_density > 150:
     logging.info("DESTINATION STRATEGY")
     destination_strategy(game)
 else:
