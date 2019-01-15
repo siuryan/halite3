@@ -260,7 +260,7 @@ class GameMap:
         maximum = 0
         for direction in self.get_unsafe_moves(ship.position, destination):
             target_pos = ship.position.directional_offset(direction)
-            if self[target_pos].halite_amount >= maximum:
+            if self[target_pos] not in Ship.next_move_squares and self[target_pos].halite_amount >= maximum:
                 maximum = self[target_pos].halite_amount
                 final_direction = direction
 
