@@ -12,7 +12,7 @@ def collapse(game, me, command_queue, ship):
         move = game.game_map.get_unsafe_moves(ship.position, me.shipyard.position)[0]
         command_queue.append(ship.move(move))
     else:
-        move = game.game_map.naivest_navigate(ship, me.shipyard.position)
+        move = game.game_map.naiver_navigate(ship, me.shipyard.position)
         command_queue.append(ship.move(move))
 
 
