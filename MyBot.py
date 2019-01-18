@@ -22,8 +22,12 @@ cells = [item for sublist in game.game_map._cells for item in sublist]
 # Respond with your name.
 game.ready("MyBot")
 
-while len(game.me.get_ships()) < 10:
-    explore_strategy(game, ship_status, cells)
-
 while True:
-    destination_strategy(game, sections_exploring, ship_destinations, ship_status, cells)
+    halites = [cell.halite_amount for cell in cells]
+    map_density = reduce(lambda total, halite: total + halite, halites) / len(cells)
+    
+    if len(game.me.get_ships()) < 10 or map_density < hlt.constants.HALITE_DENSITY_THRESHOLD:
+        explore_strategy(game, ship_status, cells)
+
+    else:
+        destination_strategy(game, sections_exploring, ship_destinations, ship_status, cells)
