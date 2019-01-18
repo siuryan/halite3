@@ -32,19 +32,19 @@ def handle_commands(game, me, command_queue):
         first_ship = Ship.next_move_squares[position][0]
         if len(Ship.next_move_squares[position]) > 1:
             for ship in Ship.next_move_squares[position]:
-                if ship,position == position:
+                if ship.position == position:
                     first_ship = ship
                     break
 
-        logging.info(ship)
+        logging.info(first_ship)
         if first_ship.position == position:
             move = 'o'
         else:
-            move = game_map.get_unsafe_moves(first_ship.position, position)[0]
+            move = game.game_map.get_unsafe_moves(first_ship.position, position)[0]
         command_queue.append(first_ship.move(move))
-            for ship in Ship.next_move_squares[position][1:]:
-                logging.info(ship.id)
-                Ship.next_move_squares[position].remove(ship)
-                move = game_map.naivest_navigate(ship, nav.collect_halite(game_map, me, ship))
-                logging.info(move)
-                command_queue.append(ship.move(move))
+        for ship in Ship.next_move_squares[position][1:]:
+            logging.info(ship.id)
+            Ship.next_move_squares[position].remove(ship)
+            move = game.game_map.naivest_navigate(ship, nav.collect_halite(game.game_map, me, ship))
+            logging.info(move)
+            command_queue.append(ship.move(move))
