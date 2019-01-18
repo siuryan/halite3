@@ -45,6 +45,6 @@ def handle_commands(game, me, command_queue):
         for ship in Ship.next_move_squares[position][1:]:
             logging.info(ship.id)
             Ship.next_move_squares[position].remove(ship)
-            move = game.game_map.naivest_navigate(ship, nav.collect_halite(game.game_map, me, ship))
+            move = game.game_map.naiver_navigate(ship, nav.collect_halite(game.game_map, me, ship))
             logging.info(move)
             command_queue.append(ship.move(move))
