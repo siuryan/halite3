@@ -13,8 +13,7 @@ from util import map_sections
 
 from strategy import common
 
-def destination_strategy(game):
-
+def run_destination_strategy(game):
     sections_exploring = []
     for i in range(0, 8):
         sections_exploring.append([-1, -1, -1, -1, -1, -1, -1, -1])
@@ -25,45 +24,77 @@ def destination_strategy(game):
     cells = [item for sublist in game.game_map._cells for item in sublist]
 
     # Respond with your name.
-    game.ready("v1")
+    game.ready("DestinationBot")
 
     while True:
-        # Get the latest game state.
-        game.update_frame()
-        # You extract player metadata and the updated map metadata here for convenience.
-        me = game.me
-        game_map = game.game_map
+        destination_strategy(game, sections_exploring, ship_destinations, ship_status, cells)
+        
 
-        # A command queue holds all the commands you will run this turn.
-        command_queue = []
-        Ship.next_move_squares = {}
+def destination_strategy(game, sections_exploring, ship_destinations, ship_status, cells):
 
-        for ship in me.get_ships():
-            logging.info("Ship {} has {} halite.".format(ship.id, ship.halite_amount))
-            logging.info("Ship {} is {}.".format(ship.id, ship_status[ship.id] if ship.id in ship_status else "no status"))
+    # Get the latest game state.
+    game.update_frame()
+    # You extract player metadata and the updated map metadata here for convenience.
+    me = game.me
+    game_map = game.game_map
 
-            if nav.should_collapse(game_map, ship, me.shipyard, game.turn_number):
-                ship_status[ship.id] = "collapsing"
+    # A command queue holds all the commands you will run this turn.
+    command_queue = []
+    Ship.next_move_squares = {}
 
-            if ship.id not in ship_status:
-                # Send it to the most optimal section of the map
+    for ship in me.get_ships():
+        logging.info("Ship {} has {} halite.".format(ship.id, ship.halite_amount))
+        logging.info("Ship {} is {}.".format(ship.id, ship_status[ship.id] if ship.id in ship_status else "no status"))
+
+        if nav.should_collapse(game_map, ship, me.shipyard, game.turn_number):
+            ship_status[ship.id] = "collapsing"
+
+        if ship.id not in ship_status:
+            # Send it to the most optimal section of the map
+            max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map, game.turn_number), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
+            ship_destinations[ship.id] = game_map.normalize(max_dest_info[0])
+            ship.destx = max_dest_info[1]
+            ship.desty = max_dest_info[2]
+            sections_exploring[ship.destx][ship.desty] = ship.id
+            ship_status[ship.id] = "deploying"
+
+        if ship_status[ship.id] == "collapsing":
+            common.collapse(game, me, command_queue, ship)
+            continue
+
+        if ship_status[ship.id] != "returning" and ship.halite_amount >= constants.MAX_HALITE * .9:
+            ship_status[ship.id] = "returning"
+
+        if ship_status[ship.id] == "returning" and ship.halite_amount >= game_map[ship.position].halite_amount * 0.1:
+            if ship.position == me.shipyard.position:
+                # Re-deploy it to an optimal section of the map
+                sections_exploring[ship.destx][ship.desty] = -1
                 max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map, game.turn_number), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
                 ship_destinations[ship.id] = game_map.normalize(max_dest_info[0])
                 ship.destx = max_dest_info[1]
                 ship.desty = max_dest_info[2]
                 sections_exploring[ship.destx][ship.desty] = ship.id
                 ship_status[ship.id] = "deploying"
-
-            if ship_status[ship.id] == "collapsing":
-                common.collapse(game, me, command_queue, ship)
+            else:
+                #move = nav.returning(game_map, ship, me.shipyard)
+                move = game_map.naive_navigate(ship, me.shipyard.position)
                 continue
 
-            if ship_status[ship.id] != "returning" and ship.halite_amount >= constants.MAX_HALITE * .9:
-                ship_status[ship.id] = "returning"
-
-            if ship_status[ship.id] == "returning" and ship.halite_amount >= game_map[ship.position].halite_amount * 0.1:
+        # For each of your ships, move randomly if the ship is on a low halite location or the ship is full.
+        #   Else, collect halite.
+        if (game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full) and ship.halite_amount >= game_map[ship.position].halite_amount * 0.1:
+            if ship_status[ship.id] == "deploying":
+                logging.info(ship_destinations[ship.id])
                 if ship.position == me.shipyard.position:
-                    # Re-deploy it to an optimal section of the map
+                    #move = nav.exiting(game_map, ship, me.shipyard, ship_destinations[ship.id])
+                    move = game_map.naive_navigate(ship, ship_destinations[ship.id])
+                elif ship.position == ship_destinations[ship.id]:
+                    ship_status[ship.id] = "exploring"
+                else:
+                    move = game_map.naive_navigate(ship, ship_destinations[ship.id])
+            if ship_status[ship.id] == "exploring":
+                '''
+                if nav.check_sparse(game_map, ship.position):
                     sections_exploring[ship.destx][ship.desty] = -1
                     max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map, game.turn_number), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
                     ship_destinations[ship.id] = game_map.normalize(max_dest_info[0])
@@ -71,59 +102,32 @@ def destination_strategy(game):
                     ship.desty = max_dest_info[2]
                     sections_exploring[ship.destx][ship.desty] = ship.id
                     ship_status[ship.id] = "deploying"
+                    if
+                    move = game_map.naive_navigate(ship, ship_destinations[ship.id])
                 else:
-                    #move = nav.returning(game_map, ship, me.shipyard)
-                    move = game_map.naive_navigate(ship, me.shipyard.position)
+                '''
+                position = nav.collect_halite(game_map, me, ship)
+                if position == ship.position:
+                    if game_map.normalize(ship.position) in Ship.next_move_squares:
+                        Ship.next_move_squares[game_map.normalize(ship.position)].insert(0, ship)
+                    else:
+                        Ship.next_move_squares[game_map.normalize(ship.position)] = [ship]
                     continue
-
-            # For each of your ships, move randomly if the ship is on a low halite location or the ship is full.
-            #   Else, collect halite.
-            if (game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full) and ship.halite_amount >= game_map[ship.position].halite_amount * 0.1:
-                if ship_status[ship.id] == "deploying":
-                    logging.info(ship_destinations[ship.id])
-                    if ship.position == me.shipyard.position:
-                        #move = nav.exiting(game_map, ship, me.shipyard, ship_destinations[ship.id])
-                        move = game_map.naive_navigate(ship, ship_destinations[ship.id])
-                    elif ship.position == ship_destinations[ship.id]:
-                        ship_status[ship.id] = "exploring"
-                    else:
-                        move = game_map.naive_navigate(ship, ship_destinations[ship.id])
-                if ship_status[ship.id] == "exploring":
-                    '''
-                    if nav.check_sparse(game_map, ship.position):
-                        sections_exploring[ship.destx][ship.desty] = -1
-                        max_dest_info = map_sections.max_dest(map_sections.get_section_values(ship, game_map, game.turn_number), sections_exploring, game_map.width, game_map.height, me.shipyard.position)
-                        ship_destinations[ship.id] = game_map.normalize(max_dest_info[0])
-                        ship.destx = max_dest_info[1]
-                        ship.desty = max_dest_info[2]
-                        sections_exploring[ship.destx][ship.desty] = ship.id
-                        ship_status[ship.id] = "deploying"
-                        if
-                        move = game_map.naive_navigate(ship, ship_destinations[ship.id])
-                    else:
-                    '''
-                    position = nav.collect_halite(game_map, me, ship)
-                    if position == ship.position:
-                        if game_map.normalize(ship.position) in Ship.next_move_squares:
-                            Ship.next_move_squares[game_map.normalize(ship.position)].insert(0, ship)
-                        else:
-                            Ship.next_move_squares[game_map.normalize(ship.position)] = [ship]
-                        continue
-                    move = game_map.naive_navigate(ship, position)
+                move = game_map.naive_navigate(ship, position)
+        else:
+            #add to the dictionary
+            if game_map.normalize(ship.position) in Ship.next_move_squares:
+                Ship.next_move_squares[game_map.normalize(ship.position)].insert(0, ship)
             else:
-                #add to the dictionary
-                if game_map.normalize(ship.position) in Ship.next_move_squares:
-                    Ship.next_move_squares[game_map.normalize(ship.position)].insert(0, ship)
-                else:
-                    Ship.next_move_squares[game_map.normalize(ship.position)] = [ship]
+                Ship.next_move_squares[game_map.normalize(ship.position)] = [ship]
 
-        common.handle_commands(game, me, command_queue)
+    common.handle_commands(game, me, command_queue)
 
-        # If you're on the first turn and have enough halite, spawn a ship.
-        # Don't spawn a ship if you currently have a ship at port, though.
-        common.spawn_ship(game, me, command_queue, cells)
+    # If you're on the first turn and have enough halite, spawn a ship.
+    # Don't spawn a ship if you currently have a ship at port, though.
+    common.spawn_ship(game, me, command_queue, cells)
 
-        logging.info(command_queue)
+    logging.info(command_queue)
 
-        # Send your moves back to the game environment, ending this turn.
-        game.end_turn(command_queue)
+    # Send your moves back to the game environment, ending this turn.
+    game.end_turn(command_queue)

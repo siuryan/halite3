@@ -69,4 +69,4 @@ def random_direction():
 
 def should_spawn(game, me, density, turn):
     return turn < 150 or (density > constants.HALITE_DENSITY_THRESHOLD and turn < 200) or \
-    (turn < 300 and len(game.players) == 2 and len(me.get_ships()) < max([len(game.players[player].get_ships()) for player in game.players]))
+    (turn < constants.MAX_TURNS - 100 and len(game.players) == 2 and len(me.get_ships()) < max([len(game.players[player].get_ships()) for player in game.players]))
