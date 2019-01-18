@@ -42,7 +42,7 @@ def handle_commands(game, me, command_queue):
         else:
             move = game.game_map.get_unsafe_moves(first_ship.position, position)[0]
         command_queue.append(first_ship.move(move))
-        remaining_ship_list = Ship.next_move_squares[position]
+        remaining_ship_list = list(Ship.next_move_squares[position])
         remaining_ship_list.remove(first_ship)
         for ship in remaining_ship_list:
             logging.info(ship.id)
