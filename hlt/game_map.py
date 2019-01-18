@@ -247,6 +247,27 @@ class GameMap:
                 return direction
         return Direction.Still
 
+    def naiver_navigate(self, ship, destination):
+        """
+        Returns a singular safe move towards the destination.
+        :param ship: The ship to move.
+        :param destination: Ending position
+        :return: A direction.
+        """
+        # No need to normalize destination, since get_unsafe_moves
+        # does that
+        for direction in self.get_unsafe_moves(ship.position, destination):
+            target_pos = ship.position.directional_offset(direction)
+            if self.normalize(target_pos) not in Ship.next_move_squares:
+                Ship.next_move_squares[self.normalize(target_pos)] = ship
+                return direction
+        for direction in [Direction.North, Direction.South, Direction.East, Direction.West, Direction.Still]:
+            target_pos = ship.position.directional_offset(direction)
+            if self.normalize(target_pos) not in Ship.next_move_squares:
+                Ship.next_move_squares[self.normalize(target_pos)] = ship
+                return direction
+        return Direction.Still
+
     def naive_navigate(self, ship, destination):
         """
         Returns a singular safe move towards the destination.
