@@ -259,12 +259,12 @@ class GameMap:
         for direction in self.get_unsafe_moves(ship.position, destination):
             target_pos = ship.position.directional_offset(direction)
             if self.normalize(target_pos) not in Ship.next_move_squares:
-                Ship.next_move_squares[self.normalize(target_pos)] = ship
+                Ship.next_move_squares[self.normalize(target_pos)] = [ship]
                 return direction
         for direction in [Direction.North, Direction.South, Direction.East, Direction.West, Direction.Still]:
             target_pos = ship.position.directional_offset(direction)
             if self.normalize(target_pos) not in Ship.next_move_squares:
-                Ship.next_move_squares[self.normalize(target_pos)] = ship
+                Ship.next_move_squares[self.normalize(target_pos)] = [ship]
                 return direction
         return Direction.Still
 
