@@ -26,7 +26,7 @@ def spawn_ship(game, me, command_queue, cells):
         command_queue.append(me.shipyard.spawn())
 
 def handle_commands(game, me, command_queue):
-    for position in Ship.next_move_squares:
+    for position in list(Ship.next_move_squares):
         logging.info(Ship.next_move_squares)
         logging.info(position)
         first_ship = Ship.next_move_squares[position][0]
